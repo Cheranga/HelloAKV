@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.KeyVault;
 using Microsoft.Azure.Services.AppAuthentication;
+using Microsoft.Extensions.Configuration;
 
 namespace HelloAKV.Controllers
 {
@@ -12,20 +11,29 @@ namespace HelloAKV.Controllers
     [ApiController]
     public class ValuesController : ControllerBase
     {
+        private readonly IConfiguration _configuration;
+
+        public ValuesController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
         // GET api/values
         [HttpGet]
         public async Task<ActionResult<IEnumerable<string>>> Get()
         {
-            var tokenProvider = new AzureServiceTokenProvider();
-            var keyVaultClient = new KeyVaultClient(new KeyVaultClient.AuthenticationCallback(tokenProvider.KeyVaultTokenCallback));
-            var secretData = await keyVaultClient.GetSecretAsync(@"https://mystash.vault.azure.net/secrets/DbConnectionString").ConfigureAwait(false);
+            var secretValue = _configuration["DbConnectionString"];
+            
+            //var tokenProvider = new AzureServiceTokenProvider();
+            //var keyVaultClient = new KeyVaultClient(new KeyVaultClient.AuthenticationCallback(tokenProvider.KeyVaultTokenCallback));
+            //var secretData = await keyVaultClient.GetSecretAsync(@"https://mystash.vault.azure.net/secrets/DbConnectionString").ConfigureAwait(false);
 
-            if (secretData == null)
-            {
-                return new[] {"Secret cannot be accessed"};
-            }
+            //if (secretData == null)
+            //{
+            //    return new[] {"Secret cannot be accessed"};
+            //}
 
-            return new[] {secretData.Value};
+            return new[] {secretValue};
         }
 
         // GET api/values/5
