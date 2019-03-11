@@ -33,7 +33,7 @@ namespace HelloAKV.Controllers
             //    return new[] {"Secret cannot be accessed"};
             //}
 
-            return new[] {secretValue};
+            return new[] {secretValue, "new value to show"};
         }
 
         // GET api/values/5
